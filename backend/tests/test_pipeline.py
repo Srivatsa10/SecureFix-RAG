@@ -100,7 +100,10 @@ def test_cost_summary_counterfactual(settings):
         ),
     ]
     cost = summarize_costs(usage, settings)
-    assert cost.generation_usd == pytest.approx(2000 * 5 / 1e6 + 500 * 25 / 1e6)
+    assert cost.generation_usd == pytest.approx(
+        2000 * settings.price_generation_input_per_m / 1e6
+        + 500 * settings.price_generation_output_per_m / 1e6
+    )
     assert cost.jev_usd == pytest.approx(1000 * 0.042 / 1e6)
     judge = (1000 + 350) * 1.0 / 1e6 + 3 * 150 * 5.0 / 1e6
     assert cost.llm_judge_decision_usd == pytest.approx(judge)

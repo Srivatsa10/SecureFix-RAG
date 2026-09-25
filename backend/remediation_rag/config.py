@@ -34,6 +34,8 @@ class Settings(BaseSettings):
         env_file=(REPO_ROOT / ".env", BACKEND_ROOT / ".env"),
         env_file_encoding="utf-8",
         extra="ignore",
+        # `PINECONE_API_KEY=` left blank means "not set", not an empty key.
+        env_ignore_empty=True,
     )
 
     # --- Runtime mode -------------------------------------------------------------------
@@ -45,13 +47,16 @@ class Settings(BaseSettings):
     # --- AWS Bedrock --------------------------------------------------------------------
     aws_region: str = "us-east-1"
     aws_profile: str | None = None
-    # Use the inference-profile ID shown in your Bedrock console (often `us.`/`global.` prefixed).
-    bedrock_generation_model_id: str = "anthropic.claude-opus-5"
+    # Claude Haiku 4.5 via the US cross-region inference profile (on-demand Haiku 4.5 on
+    # Bedrock requires an inference profile). Swap the prefix for `global.`/`eu.` as needed.
+    bedrock_generation_model_id: str = "us.anthropic.claude-haiku-4-5-20251001-v1:0"
     bedrock_generation_max_tokens: int = 4096
     bedrock_embedding_model_id: str = "amazon.titan-embed-text-v2:0"
     bedrock_embedding_dimensions: int = 1024
 
-    # --- Pinecone -----------------------------------------------------------------------
+    # --- Pinecone (pinecone.io, used directly with an API key) ---------------------------
+    # cloud/region only choose where Pinecone hosts the serverless index; the free Starter
+    # plan supports aws/us-east-1. No AWS account is involved.
     pinecone_api_key: SecretStr | None = None
     pinecone_index_name: str = "remediation-rag"
     pinecone_cloud: str = "aws"
@@ -76,8 +81,8 @@ class Settings(BaseSettings):
 
     # --- Cost model (USD per 1M tokens). Bedrock pricing is partner-set: override these
     # with your region's Bedrock price sheet before quoting results. ---------------------
-    price_generation_input_per_m: float = 5.00
-    price_generation_output_per_m: float = 25.00
+    price_generation_input_per_m: float = 1.00  # Claude Haiku 4.5 list price
+    price_generation_output_per_m: float = 5.00
     price_jev_input_per_m: float = 0.042
     # Counterfactual "LLM-as-judge" used in the cost comparison (defaults: Haiku 4.5 list).
     price_judge_input_per_m: float = 1.00
