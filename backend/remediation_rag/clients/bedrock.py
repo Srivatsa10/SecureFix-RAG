@@ -7,6 +7,7 @@ glue; the chat model is injectable so tests can substitute a fake.
 from __future__ import annotations
 
 import logging
+import os
 from collections.abc import Mapping
 from typing import Any
 
@@ -28,8 +29,23 @@ from remediation_rag.telemetry import stopwatch
 logger = logging.getLogger(__name__)
 
 
+BEARER_TOKEN_ENV = "AWS_BEARER_TOKEN_BEDROCK"
+
+
+def apply_bedrock_api_key(settings: Settings) -> None:
+    """Expose a Bedrock API key from settings/.env to botocore, which reads it from the env.
+
+    pydantic-settings loads `.env` into Settings without exporting it, so without this a key
+    written in `.env` would be invisible to the AWS SDK. An already-exported value wins.
+    """
+    if settings.aws_bearer_token_bedrock is not None and not os.environ.get(BEARER_TOKEN_ENV):
+        os.environ[BEARER_TOKEN_ENV] = settings.aws_bearer_token_bedrock.get_secret_value()
+
+
 def build_chat_model(settings: Settings) -> BaseChatModel:
     from langchain_aws import ChatBedrockConverse
+
+    apply_bedrock_api_key(settings)
 
     kwargs: dict[str, Any] = {
         "model_id": settings.bedrock_generation_model_id,
@@ -43,6 +59,8 @@ def build_chat_model(settings: Settings) -> BaseChatModel:
 
 def build_embeddings(settings: Settings) -> Embeddings:
     from langchain_aws import BedrockEmbeddings
+
+    apply_bedrock_api_key(settings)
 
     kwargs: dict[str, Any] = {
         "model_id": settings.bedrock_embedding_model_id,

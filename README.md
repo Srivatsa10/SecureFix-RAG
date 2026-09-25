@@ -40,7 +40,7 @@ Then open http://localhost:5173, pick an example and click **Generate patch**.
 **No API keys are needed to try it.** By default (`APP_MODE=offline`, `JEV_MODE=mock`)
 the app uses clearly labelled local stand-ins for Bedrock, Pinecone and Jev. To use the
 real services:
-1. Fill in `.env`: AWS credentials with Bedrock access to Claude Haiku 4.5 and Titan
+1. Fill in `.env`: a Bedrock API key (`AWS_BEARER_TOKEN_BEDROCK`) or other AWS credentials with access to Claude Haiku 4.5 and Titan
    Embeddings V2, a [pinecone.io](https://www.pinecone.io) API key, and a Jev key.
 2. Set `APP_MODE=live` and `JEV_MODE=live`.
 3. Load the knowledge base:

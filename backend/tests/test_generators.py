@@ -1,4 +1,5 @@
 import json
+import os
 
 import pytest
 from langchain_core.language_models.fake_chat_models import GenericFakeChatModel
@@ -112,3 +113,16 @@ async def test_offline_generator_parameterizes(language, code, expected):
     assert expected in result.draft.patched_code
     assert result.draft.diff.startswith("--- a/")
     assert "OFFLINE MODE" in result.draft.explanation
+
+
+def test_bedrock_api_key_from_settings_is_exported(monkeypatch):
+    from remediation_rag.clients.bedrock import BEARER_TOKEN_ENV, apply_bedrock_api_key
+    from remediation_rag.config import Settings
+
+    monkeypatch.delenv(BEARER_TOKEN_ENV, raising=False)
+    apply_bedrock_api_key(Settings(_env_file=None, aws_bearer_token_bedrock="tok-123"))
+    assert os.environ[BEARER_TOKEN_ENV] == "tok-123"
+
+    # An already-exported token is not overwritten.
+    apply_bedrock_api_key(Settings(_env_file=None, aws_bearer_token_bedrock="other"))
+    assert os.environ[BEARER_TOKEN_ENV] == "tok-123"

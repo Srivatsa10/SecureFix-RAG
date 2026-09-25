@@ -47,6 +47,9 @@ class Settings(BaseSettings):
     # --- AWS Bedrock --------------------------------------------------------------------
     aws_region: str = "us-east-1"
     aws_profile: str | None = None
+    # Bedrock API key: an alternative to IAM access keys / profiles. Exported to the
+    # environment as AWS_BEARER_TOKEN_BEDROCK, which botocore reads for Bedrock calls.
+    aws_bearer_token_bedrock: SecretStr | None = None
     # Claude Haiku 4.5 via the US cross-region inference profile (on-demand Haiku 4.5 on
     # Bedrock requires an inference profile). Swap the prefix for `global.`/`eu.` as needed.
     bedrock_generation_model_id: str = "us.anthropic.claude-haiku-4-5-20251001-v1:0"
