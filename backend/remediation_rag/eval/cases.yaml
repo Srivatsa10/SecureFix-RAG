@@ -1,0 +1,140 @@
+# Evaluation set: small, self-contained vulnerable snippets (textbook injection shapes,
+# no exploit payloads). `expected_status` is what a correct system should do.
+cases:
+  - id: py-psycopg-fstring
+    title: Python psycopg f-string lookup
+    language: python
+    framework: psycopg
+    description: "Bandit B608: possible SQL injection via string-based query construction"
+    expected_status: shipped
+    code: |
+      def get_user(cursor, name):
+          cursor.execute(f"SELECT id, email FROM users WHERE name = '{name}'")
+          return cursor.fetchone()
+
+  - id: py-sqlite-concat
+    title: Python concatenated query then execute
+    language: python
+    framework: sqlite3
+    description: "Semgrep: formatted-sql-query"
+    expected_status: shipped
+    code: |
+      def load_invoice(conn, invoice_id):
+          query = "SELECT * FROM invoices WHERE id = '" + invoice_id + "'"
+          cur = conn.cursor()
+          cur.execute(query)
+          return cur.fetchone()
+
+  - id: py-django-raw-percent
+    title: Django raw() with % formatting
+    language: python
+    framework: django
+    description: "Django raw query built with % string formatting"
+    expected_status: shipped
+    code: |
+      def find_customer(username):
+          return Customer.objects.raw(
+              "SELECT * FROM shop_customer WHERE username = '%s'" % username
+          )
+
+  - id: py-sqlalchemy-text-fstring
+    title: SQLAlchemy text() with f-string
+    language: python
+    framework: sqlalchemy
+    description: "User search term interpolated into text()"
+    expected_status: shipped
+    code: |
+      def search_products(session, term):
+          stmt = text(f"SELECT id, name FROM products WHERE name ILIKE '%{term}%'")
+          return session.execute(stmt).all()
+
+  - id: py-dynamic-order-by
+    title: Python dynamic ORDER BY from request
+    language: python
+    framework: psycopg
+    description: "Sort column taken from a query-string parameter"
+    expected_status: shipped
+    code: |
+      def list_orders(cursor, customer_id, sort):
+          cursor.execute(
+              f"SELECT * FROM orders WHERE customer_id = %s ORDER BY {sort}", (customer_id,)
+          )
+          return cursor.fetchall()
+
+  - id: js-pg-template-literal
+    title: Express + pg template literal
+    language: javascript
+    framework: pg
+    description: "Route parameter interpolated into SQL"
+    expected_status: shipped
+    code: |
+      app.get('/orders/:id', async (req, res) => {
+        const result = await pool.query(`SELECT * FROM orders WHERE id = ${req.params.id}`);
+        res.json(result.rows);
+      });
+
+  - id: js-mysql-concat
+    title: mysql2 string concatenation
+    language: javascript
+    framework: mysql2
+    description: "Email from request body concatenated into query"
+    expected_status: shipped
+    code: |
+      function findUser(connection, email, cb) {
+        connection.query("SELECT * FROM users WHERE email = '" + email + "'", cb);
+      }
+
+  - id: js-sequelize-query
+    title: Sequelize raw query with interpolation
+    language: javascript
+    framework: sequelize
+    description: "Status filter interpolated into sequelize.query"
+    expected_status: shipped
+    code: |
+      async function accountsByStatus(status) {
+        return sequelize.query(`SELECT * FROM accounts WHERE status = '${status}'`, {
+          type: QueryTypes.SELECT,
+        });
+      }
+
+  - id: java-jdbc-statement
+    title: Java JDBC Statement concatenation
+    language: java
+    framework: jdbc
+    description: "SpotBugs SQL_NONCONSTANT_STRING_PASSED_TO_EXECUTE"
+    expected_status: shipped
+    code: |
+      public Account findByOwner(Connection connection, String owner) throws SQLException {
+          Statement st = connection.createStatement();
+          ResultSet rs = st.executeQuery("SELECT * FROM accounts WHERE owner = '" + owner + "'");
+          return rs.next() ? mapRow(rs) : null;
+      }
+
+  - id: java-jpa-createquery
+    title: JPA createQuery concatenation
+    language: java
+    framework: spring-data-jpa
+    description: "JPQL built by concatenating a request parameter"
+    expected_status: shipped
+    code: |
+      public List<Order> ordersForEmail(String email) {
+          return entityManager
+              .createQuery("SELECT o FROM Order o WHERE o.customer.email = '" + email + "'", Order.class)
+              .getResultList();
+      }
+
+  - id: out-of-scope-chat
+    title: Non-remediation request
+    description: "General question, not code"
+    expected_status: rejected
+    code: |
+      Can you summarise the action items from this week's sprint retro?
+
+  - id: unsupported-xss
+    title: XSS (class not yet ingested)
+    language: javascript
+    description: "DOM XSS via innerHTML"
+    expected_status: rejected
+    code: |
+      const params = new URLSearchParams(location.search);
+      document.getElementById('greeting').innerHTML = 'Hello ' + params.get('name');

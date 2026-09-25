@@ -1,0 +1,69 @@
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+
+.status {
+  padding: 14px 18px;
+  border-radius: var(--radius);
+  border: 1px solid transparent;
+}
+
+.shipped {
+  composes: status;
+  background: var(--ok-bg);
+  border-color: color-mix(in srgb, var(--ok) 35%, transparent);
+}
+
+.shipped .statusTitle {
+  color: var(--ok);
+}
+
+.human_review_required {
+  composes: status;
+  background: var(--warn-bg);
+  border-color: color-mix(in srgb, var(--warn) 35%, transparent);
+}
+
+.human_review_required .statusTitle {
+  color: var(--warn);
+}
+
+.rejected {
+  composes: status;
+  background: var(--danger-bg);
+  border-color: color-mix(in srgb, var(--danger) 35%, transparent);
+}
+
+.rejected .statusTitle {
+  color: var(--danger);
+}
+
+.statusRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 4px 16px;
+}
+
+.statusTitle {
+  font-size: 18px;
+}
+
+.facts {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.reason {
+  margin: 8px 0 0;
+  font-size: 14px;
+}
+
+.explanation {
+  margin: 14px 0 0;
+  font-size: 14px;
+}

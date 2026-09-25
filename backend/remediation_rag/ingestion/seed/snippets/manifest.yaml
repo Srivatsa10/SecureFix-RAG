@@ -1,0 +1,74 @@
+# Approved secure-code snippets ("internal repository").
+# Each entry becomes one or more chunks in the `internal-secure-code` namespace.
+# `kind` is used by retry strategies to ask for different snippet types.
+repository: example-corp/secure-patterns
+snippets:
+  - path: python/psycopg_repository.py
+    title: psycopg parameterized repository functions
+    vuln_class: sql_injection
+    language: python
+    framework: psycopg
+    kind: parameterized_query
+
+  - path: python/sqlalchemy_repository.py
+    title: SQLAlchemy 2.0 ORM and text() bind parameters
+    vuln_class: sql_injection
+    language: python
+    framework: sqlalchemy
+    kind: orm
+
+  - path: python/django_queries.py
+    title: Django ORM filters and raw() with params
+    vuln_class: sql_injection
+    language: python
+    framework: django
+    kind: orm
+
+  - path: python/validation.py
+    title: Allowlist and typed input validation helpers
+    vuln_class: sql_injection
+    language: python
+    framework: any
+    kind: input_validation
+
+  - path: javascript/pgRepository.js
+    title: node-postgres numbered placeholders
+    vuln_class: sql_injection
+    language: javascript
+    framework: pg
+    kind: parameterized_query
+
+  - path: javascript/knexRepository.js
+    title: Knex builder with ? / ?? bindings
+    vuln_class: sql_injection
+    language: javascript
+    framework: knex
+    kind: orm
+
+  - path: javascript/sequelizeRepository.js
+    title: Sequelize finders and replacements
+    vuln_class: sql_injection
+    language: javascript
+    framework: sequelize
+    kind: orm
+
+  - path: java/AccountJdbcRepository.java
+    title: JDBC PreparedStatement repository
+    vuln_class: sql_injection
+    language: java
+    framework: jdbc
+    kind: parameterized_query
+
+  - path: java/CustomerJdbcTemplateRepository.java
+    title: Spring NamedParameterJdbcTemplate with sort allowlist
+    vuln_class: sql_injection
+    language: java
+    framework: spring-jdbc
+    kind: parameterized_query
+
+  - path: java/OrderJpaRepository.java
+    title: Spring Data JPA derived queries and @Query params
+    vuln_class: sql_injection
+    language: java
+    framework: spring-data-jpa
+    kind: orm

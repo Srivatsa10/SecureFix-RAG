@@ -1,0 +1,107 @@
+.wrapper {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  background: var(--surface-2);
+  border-bottom: 1px solid var(--border);
+}
+
+.tabs {
+  display: flex;
+  gap: 4px;
+}
+
+.tabs button,
+.copy {
+  padding: 4px 10px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.tabs button[aria-selected='true'] {
+  background: var(--surface);
+  border-color: var(--border);
+  color: var(--text);
+}
+
+.tabs button:disabled {
+  cursor: default;
+  opacity: 0.6;
+}
+
+.copy {
+  border-color: var(--border);
+  color: var(--text);
+}
+
+.code {
+  margin: 0;
+  padding: 8px 0;
+  overflow-x: auto;
+  font-size: 13px;
+  line-height: 1.6;
+  background: var(--surface);
+}
+
+.code > div {
+  display: grid;
+  grid-template-columns: 3ch 3ch 2ch 1fr;
+  gap: 0 8px;
+  padding: 0 12px;
+  white-space: pre;
+}
+
+.gutter {
+  color: var(--text-muted);
+  text-align: right;
+  user-select: none;
+  opacity: 0.7;
+}
+
+.sign {
+  user-select: none;
+  color: var(--text-muted);
+}
+
+.add {
+  background: var(--diff-add-bg);
+}
+
+.add .sign {
+  color: var(--ok);
+}
+
+.remove {
+  background: var(--diff-remove-bg);
+}
+
+.remove .sign {
+  color: var(--danger);
+}
+
+.context {
+  background: transparent;
+}
+
+.hunk {
+  color: var(--info);
+  background: var(--info-bg);
+}
+
+.plain {
+  display: block;
+  padding: 0 12px;
+  white-space: pre;
+}
