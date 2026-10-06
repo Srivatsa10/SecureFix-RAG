@@ -3,6 +3,23 @@ import { formatUsd } from '../lib/format';
 import styles from './CostPanel.module.css';
 
 export function CostPanel({ cost }: { cost: CostSummary }) {
+  const judgeRan = cost.decision_layer === 'llm_judge';
+  const rows = [
+    {
+      label: 'Jev decision layer',
+      tag: judgeRan ? 'estimate' : 'this run',
+      decisions: cost.jev_usd,
+      total: cost.total_with_jev_usd,
+      actual: !judgeRan,
+    },
+    {
+      label: 'LLM judge',
+      tag: judgeRan ? 'this run' : 'estimate',
+      decisions: cost.llm_judge_decision_usd,
+      total: cost.total_with_llm_judge_usd,
+      actual: judgeRan,
+    },
+  ];
   return (
     <div className={styles.panel}>
       <table className={styles.table}>
@@ -15,23 +32,25 @@ export function CostPanel({ cost }: { cost: CostSummary }) {
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <th scope="row">Jev decision layer</th>
-            <td>{formatUsd(cost.generation_usd)}</td>
-            <td className={styles.highlight}>{formatUsd(cost.jev_usd)}</td>
-            <td>{formatUsd(cost.total_usd)}</td>
-          </tr>
-          <tr>
-            <th scope="row">LLM judge instead</th>
-            <td>{formatUsd(cost.generation_usd)}</td>
-            <td>{formatUsd(cost.llm_judge_decision_usd)}</td>
-            <td>{formatUsd(cost.total_with_llm_judge_usd)}</td>
-          </tr>
+          {rows.map((row) => (
+            <tr key={row.label} className={row.actual ? styles.actual : undefined}>
+              <th scope="row">
+                {row.label} <span className={styles.tag}>({row.tag})</span>
+              </th>
+              <td>{formatUsd(cost.generation_usd)}</td>
+              <td className={row.actual ? styles.highlight : undefined}>
+                {formatUsd(row.decisions)}
+              </td>
+              <td>{formatUsd(row.total)}</td>
+            </tr>
+          ))}
         </tbody>
       </table>
       <p className={styles.note}>
-        {cost.jev_decisions} typed decisions in {cost.jev_calls} Jev calls
-        {cost.decision_cost_ratio ? ` · decision layer ${Math.round(cost.decision_cost_ratio)}× cheaper` : ''}
+        {cost.decisions} typed decisions in {cost.decision_calls} calls
+        {cost.decision_cost_ratio
+          ? ` · Jev is ${String(Math.round(cost.decision_cost_ratio))}× cheaper than an LLM judge for these decisions`
+          : ''}
         {cost.priced_mock_calls ? ' · includes mocked/offline calls priced at list rates' : ''}
       </p>
     </div>

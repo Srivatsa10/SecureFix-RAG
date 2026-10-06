@@ -41,7 +41,7 @@ describe('App', () => {
       expect.any(AbortSignal),
     );
     expect(await screen.findByText('Patch shipped')).toBeInTheDocument();
-    expect(screen.getByRole('region', { name: 'Jev evaluation' })).toBeInTheDocument();
+    expect(screen.getByRole('region', { name: 'Evaluation (Jev)' })).toBeInTheDocument();
     expect(screen.getByText('intent_gate')).toBeInTheDocument();
     expect(screen.getByText(/66× cheaper/)).toBeInTheDocument();
   });
@@ -70,5 +70,25 @@ describe('DecisionTrace labels', () => {
     );
     expect(screen.getByText('Jev (mock)')).toBeInTheDocument();
     expect(screen.getByText('Offline generator')).toBeInTheDocument();
+  });
+});
+
+describe('LLM judge fallback', () => {
+  it('labels the judge as the decision layer and marks Jev cost as the estimate', async () => {
+    const { ResultView } = await import('./components/ResultView');
+    const judged = {
+      ...shippedResult,
+      runtime: { ...runtime, decision_layer: 'llm_judge' as const, jev: 'LLM judge (Bedrock haiku)' },
+      usage: [
+        { node: 'evaluate_draft', provider: 'llm_judge' as const, model: 'h', input_tokens: 900, output_tokens: 60, latency_ms: 800, decisions: 3, mocked: false },
+      ],
+      cost: { ...shippedResult.cost, decision_layer: 'llm_judge' as const },
+    };
+    render(<ResultView result={judged} />);
+    expect(screen.getByRole('region', { name: 'Evaluation (LLM judge)' })).toBeInTheDocument();
+    expect(screen.getAllByText('LLM judge').length).toBeGreaterThan(0);
+    const judgeRow = screen.getByRole('rowheader', { name: /LLM judge/ });
+    expect(judgeRow).toHaveTextContent('(this run)');
+    expect(screen.getByRole('rowheader', { name: /Jev decision layer/ })).toHaveTextContent('(estimate)');
   });
 });

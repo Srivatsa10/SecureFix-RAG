@@ -63,7 +63,13 @@ def test_jev_outage_maps_to_502():
 
     async def factory(settings: Settings) -> Container:
         runtime = RuntimeInfo(
-            app_mode="t", jev="t", generator="t", vector_store="t", embeddings="t", warnings=[]
+            app_mode="t",
+            decision_layer="mock",
+            jev="t",
+            generator="t",
+            vector_store="t",
+            embeddings="t",
+            warnings=[],
         )
         return Container(service=BrokenService(None, settings, runtime))
 

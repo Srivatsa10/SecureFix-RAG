@@ -1,7 +1,9 @@
 """Graph node implementations.
 
 Division of labour:
-* Jev makes every decision (scope, vulnerability class, chunk relevance, rubric scores).
+* The decision layer makes every decision (scope, vulnerability class, chunk relevance,
+  rubric scores): Jev when a Jev API key is set, otherwise the adversarial LLM judge
+  (`clients/llm_judge.py`), or the heuristic mock offline. All share one interface.
 * Bedrock is called exactly once per attempt, in `draft_patch`.
 * Everything else is deterministic bookkeeping.
 """
@@ -77,10 +79,17 @@ def _chunk_view(chunk: Chunk) -> dict[str, Any]:
     }
 
 
+def _decider(result: JevResult) -> str:
+    """Human label for the decision layer that produced `result` (used in trace summaries)."""
+    if result.provider == "llm_judge":
+        return "LLM judge"
+    return "Jev (mock)" if result.mocked else "Jev"
+
+
 def _jev_usage(node: str, result: JevResult, decisions: int) -> UsageRecord:
     return UsageRecord(
         node=node,
-        provider="jev",
+        provider=result.provider,
         model=result.model,
         input_tokens=result.usage.input_tokens,
         output_tokens=result.usage.output_tokens,
@@ -278,7 +287,8 @@ class RemediationNodes:
                     node=NodeName.RERANK_CHUNKS,
                     attempt=attempt,
                     summary=(
-                        f"Jev Noul x{len(questions)} in 1 call: kept {len(kept)}, "
+                        f"{_decider(result)} Noul x{len(questions)} in 1 call: "
+                        f"kept {len(kept)}, "
                         f"dropped {len(scored) - len(kept)} (threshold {threshold:.2f})"
                     ),
                     data={"jev": {c.id: c.relevance for c in scored}},
@@ -420,7 +430,7 @@ class RemediationNodes:
                 TraceEvent(
                     node=NodeName.EVALUATE_DRAFT,
                     attempt=attempt,
-                    summary=f"Jev Score: {summary} -> {verdict}",
+                    summary=f"{_decider(result)} Score: {summary} -> {verdict}",
                     data={
                         "jev": {d: s.model_dump() for d, s in scores.as_dict().items()},
                         "threshold": self._config.score_threshold,

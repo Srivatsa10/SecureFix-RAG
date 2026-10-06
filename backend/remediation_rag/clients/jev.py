@@ -15,9 +15,13 @@ Contract (per TypeSafe's public docs, Sept 2026)::
     {"model": "jev-latest", "state": ..., "questions": {"name": {"type": ..., ...}}}
     -> {"model": "...", "answers": {"name": {...}}, "usage": {"input_tokens": N, ...}}
 
-`HttpJevClient` is the real implementation. `MockJevClient` (see `jev_mock.py`) is a
-local, heuristic stand-in that is only used when `JEV_MODE=mock`, and every result it
-produces is flagged `mocked=True`.
+`HttpJevClient` is the real implementation. Two other implementations share the
+`JevClient` interface so the graph never changes:
+
+* `LlmJudgeClient` (`llm_judge.py`) - the fallback when no Jev API key is set: an
+  adversarial LLM judge on Bedrock answering the same typed questions
+  (results flagged `provider="llm_judge"`).
+* `MockJevClient` (`jev_mock.py`) - offline heuristics, results flagged `mocked=True`.
 """
 
 from __future__ import annotations
@@ -140,8 +144,13 @@ class JevUsage(BaseModel):
     output_tokens: int = 0
 
 
+DecisionProvider = Literal["jev", "llm_judge"]
+
+
 class JevResult(BaseModel):
     model: str
+    # Which decision layer produced the answers: real/mocked Jev, or the LLM-judge fallback.
+    provider: DecisionProvider = "jev"
     answers: dict[str, JevAnswer]
     usage: JevUsage
     latency_ms: float

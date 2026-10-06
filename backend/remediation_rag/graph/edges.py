@@ -1,7 +1,8 @@
-"""Conditional edges. Pure functions of state; every input they read was produced by Jev.
+"""Conditional edges. Pure functions of state; every input they read came from the
+decision layer (Jev, or the LLM-judge fallback when no Jev key is set).
 
-No edge calls an LLM: routing is decided from Jev's typed outputs (intent probability,
-vulnerability class, rubric scores) plus the retry counter.
+Edges never call a model themselves: routing is decided from typed decision outputs
+(intent probability, vulnerability class, rubric scores) plus the retry counter.
 """
 
 from __future__ import annotations

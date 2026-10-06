@@ -19,10 +19,11 @@ const NODE_ACTOR: Record<string, Actor> = {
 
 /** Label actors by what actually served the request, so mocks are never shown as the real thing. */
 function actorLabels(usage: UsageRecord[]): Record<Actor, string> {
+  const llmJudge = usage.some((u) => u.provider === 'llm_judge');
   const jevMocked = usage.some((u) => u.provider === 'jev' && u.mocked);
   const offlineGenerator = usage.some((u) => u.provider === 'offline');
   return {
-    jev: jevMocked ? 'Jev (mock)' : 'Jev',
+    jev: llmJudge ? 'LLM judge' : jevMocked ? 'Jev (mock)' : 'Jev',
     bedrock: offlineGenerator ? 'Offline generator' : 'Bedrock',
     control: 'Graph',
     terminal: 'Result',

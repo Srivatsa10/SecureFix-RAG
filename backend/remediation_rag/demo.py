@@ -30,7 +30,7 @@ def _c(text: str, code: str) -> str:
 
 
 NODE_STYLE = {
-    NodeName.INTENT_GATE: "35",  # magenta = Jev
+    NodeName.INTENT_GATE: "35",  # magenta = decision layer (Jev / LLM judge)
     NodeName.RERANK_CHUNKS: "35",
     NodeName.EVALUATE_DRAFT: "35",
     NodeName.DRAFT_PATCH: "34",  # blue = Bedrock
@@ -47,7 +47,8 @@ def render(result: RemediationResult) -> str:
     runtime = result.runtime
     out.append(_c("RemediationRAG - decision trace", "1"))
     out.append(
-        f"  jev: {runtime.jev}\n  generator: {runtime.generator}\n  index: {runtime.vector_store}"
+        f"  decisions: {runtime.jev}\n  generator: {runtime.generator}\n"
+        f"  index: {runtime.vector_store}"
     )
     for warning in runtime.warnings:
         out.append(_c(f"  ! {warning}", "33"))
@@ -71,7 +72,7 @@ def render(result: RemediationResult) -> str:
         out.append(_c(f"handoff: {result.handoff_reason}", "33"))
 
     if result.scores:
-        out.append(f"\nJev scores (threshold {result.score_threshold:.2f}):")
+        out.append(f"\nDecision-layer scores (threshold {result.score_threshold:.2f}):")
         for dim, score in result.scores.as_dict().items():
             bar = "#" * round(score.value * 20)
             ok = score.value >= result.score_threshold
@@ -95,13 +96,19 @@ def render(result: RemediationResult) -> str:
         + (" (mocked/offline calls priced at list rates)" if cost.priced_mock_calls else "")
     )
     out.append(f"  generation            ${cost.generation_usd:.6f}")
+    judge_ran = cost.decision_layer == "llm_judge"
     out.append(
-        f"  Jev decisions         ${cost.jev_usd:.8f}  "
-        f"({cost.jev_decisions} decisions / {cost.jev_calls} calls)"
+        f"  decision layer        {cost.decision_layer} "
+        f"({cost.decisions} decisions / {cost.decision_calls} calls)"
     )
     out.append(
-        f"  as LLM-judge calls    ${cost.llm_judge_decision_usd:.6f}"
-        + (f"  -> {cost.decision_cost_ratio:.0f}x" if cost.decision_cost_ratio else "")
+        f"  Jev                   ${cost.jev_usd:.8f}"
+        + ("  (estimate)" if judge_ran else "  (this run)")
+    )
+    out.append(
+        f"  LLM judge             ${cost.llm_judge_decision_usd:.6f}"
+        + ("  (this run)" if judge_ran else "  (counterfactual)")
+        + (f"  -> {cost.decision_cost_ratio:.0f}x Jev" if cost.decision_cost_ratio else "")
     )
     return "\n".join(out)
 

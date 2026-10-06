@@ -31,9 +31,19 @@ class Container:
             await close()
 
 
-def _build_jev(settings: Settings) -> tuple[JevClient, str, Callable[[], Awaitable[None]] | None]:
-    if settings.jev_mode is JevMode.LIVE:
-        assert settings.jev_api_key is not None
+@dataclass(frozen=True)
+class DecisionLayer:
+    client: JevClient
+    kind: str  # "jev" | "llm_judge" | "mock"
+    label: str
+    close: Callable[[], Awaitable[None]] | None = None
+
+
+def _build_decision_layer(settings: Settings) -> DecisionLayer:
+    mode = settings.resolved_jev_mode
+    if mode is JevMode.LIVE:
+        if settings.jev_api_key is None:
+            raise ValueError("JEV_MODE=live requires JEV_API_KEY")
         client = HttpJevClient(
             settings.jev_api_key.get_secret_value(),
             base_url=settings.jev_base_url,
@@ -41,8 +51,20 @@ def _build_jev(settings: Settings) -> tuple[JevClient, str, Callable[[], Awaitab
             timeout_seconds=settings.jev_timeout_seconds,
             max_attempts=settings.jev_max_attempts,
         )
-        return client, f"live ({settings.jev_model})", client.aclose
-    return MockJevClient(), "MOCK (local heuristics, not the real Jev model)", None
+        return DecisionLayer(client, "jev", f"Jev ({settings.jev_model})", client.aclose)
+    if mode is JevMode.LLM:
+        from remediation_rag.clients.bedrock import build_judge_model
+        from remediation_rag.clients.llm_judge import LlmJudgeClient
+
+        judge = LlmJudgeClient(
+            build_judge_model(settings),
+            settings.bedrock_judge_model_id,
+            max_attempts=settings.judge_max_attempts,
+        )
+        return DecisionLayer(
+            judge, "llm_judge", f"LLM judge (Bedrock {settings.bedrock_judge_model_id})"
+        )
+    return DecisionLayer(MockJevClient(), "mock", "MOCK (local heuristics, not the real Jev model)")
 
 
 async def _build_index_and_generator(
@@ -77,12 +99,18 @@ async def _build_index_and_generator(
 
 
 async def build_container(settings: Settings) -> Container:
-    jev, jev_label, jev_close = _build_jev(settings)
+    decisions = _build_decision_layer(settings)
+    jev = decisions.client
     index, generator, generator_label, embeddings_label = await _build_index_and_generator(settings)
 
     warnings = []
-    if jev.is_mock:
+    if decisions.kind == "mock":
         warnings.append("Jev is mocked: decision scores come from local heuristics.")
+    elif decisions.kind == "llm_judge":
+        warnings.append(
+            "No Jev API key: decisions are made by an LLM judge on Bedrock "
+            "(higher cost and latency than Jev)."
+        )
     if generator.is_offline:
         warnings.append("Offline mode: patches come from a rule-based rewriter, not Bedrock.")
 
@@ -100,7 +128,8 @@ async def build_container(settings: Settings) -> Container:
     )
     runtime = RuntimeInfo(
         app_mode=settings.app_mode.value,
-        jev=jev_label,
+        decision_layer=decisions.kind,
+        jev=decisions.label,
         generator=generator_label,
         vector_store=index.label,
         embeddings=embeddings_label,
@@ -110,5 +139,5 @@ async def build_container(settings: Settings) -> Container:
         logger.warning(warning)
     return Container(
         service=RemediationService(graph, settings, runtime),
-        _closers=[jev_close] if jev_close else [],
+        _closers=[decisions.close] if decisions.close else [],
     )

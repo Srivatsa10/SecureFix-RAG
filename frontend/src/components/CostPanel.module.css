@@ -40,3 +40,13 @@
   font-size: 12px;
   color: var(--text-muted);
 }
+
+.tag {
+  color: var(--text-muted);
+  font-weight: 400;
+  font-size: 12px;
+}
+
+.actual th {
+  font-weight: 600;
+}

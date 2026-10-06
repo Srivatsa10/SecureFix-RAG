@@ -27,6 +27,8 @@ class RuntimeInfo(BaseModel):
     """Which implementations served the request. Surfaced so mocks are never mistaken for real."""
 
     app_mode: str
+    # "jev" | "llm_judge" | "mock": which engine answers the graph's typed decisions.
+    decision_layer: str
     jev: str
     generator: str
     vector_store: str

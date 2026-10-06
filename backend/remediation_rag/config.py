@@ -25,7 +25,15 @@ class AppMode(StrEnum):
 
 
 class JevMode(StrEnum):
+    """Which decision layer answers the graph's typed questions.
+
+    AUTO picks LIVE when JEV_API_KEY is set, otherwise LLM (an adversarial LLM judge on
+    Bedrock) when APP_MODE=live, otherwise MOCK (offline heuristics).
+    """
+
+    AUTO = "auto"
     LIVE = "live"
+    LLM = "llm"
     MOCK = "mock"
 
 
@@ -40,8 +48,9 @@ class Settings(BaseSettings):
 
     # --- Runtime mode -------------------------------------------------------------------
     app_mode: AppMode = AppMode.OFFLINE
-    # Jev can be mocked independently (e.g. real Bedrock + Pinecone, but no Jev access yet).
-    jev_mode: JevMode = JevMode.MOCK
+    # Decision layer. AUTO: real Jev if JEV_API_KEY is set, else the LLM judge (live) or the
+    # heuristic mock (offline). See JevMode.
+    jev_mode: JevMode = JevMode.AUTO
     log_level: str = "INFO"
 
     # --- AWS Bedrock --------------------------------------------------------------------
@@ -54,6 +63,10 @@ class Settings(BaseSettings):
     # Bedrock requires an inference profile). Swap the prefix for `global.`/`eu.` as needed.
     bedrock_generation_model_id: str = "us.anthropic.claude-haiku-4-5-20251001-v1:0"
     bedrock_generation_max_tokens: int = 4096
+    # LLM judge: the decision layer used when no Jev API key is available.
+    bedrock_judge_model_id: str = "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+    bedrock_judge_max_tokens: int = 2048
+    judge_max_attempts: int = Field(default=2, ge=1, le=5)
     bedrock_embedding_model_id: str = "amazon.titan-embed-text-v2:0"
     bedrock_embedding_dimensions: int = 1024
 
@@ -87,7 +100,8 @@ class Settings(BaseSettings):
     price_generation_input_per_m: float = 1.00  # Claude Haiku 4.5 list price
     price_generation_output_per_m: float = 5.00
     price_jev_input_per_m: float = 0.042
-    # Counterfactual "LLM-as-judge" used in the cost comparison (defaults: Haiku 4.5 list).
+    # LLM judge prices (defaults: Haiku 4.5 list). Used for real cost when the judge is the
+    # decision layer, and for the counterfactual estimate when Jev is.
     price_judge_input_per_m: float = 1.00
     price_judge_output_per_m: float = 5.00
     judge_output_tokens_per_decision: int = 150
@@ -104,8 +118,19 @@ class Settings(BaseSettings):
         if self.app_mode is AppMode.LIVE and self.pinecone_api_key is None:
             raise ValueError("APP_MODE=live requires PINECONE_API_KEY")
         if self.jev_mode is JevMode.LIVE and self.jev_api_key is None:
-            raise ValueError("JEV_MODE=live requires JEV_API_KEY")
+            raise ValueError("JEV_MODE=live requires JEV_API_KEY (or use JEV_MODE=auto)")
         return self
+
+    @property
+    def resolved_jev_mode(self) -> JevMode:
+        """The concrete decision layer after resolving AUTO."""
+        if self.jev_mode is not JevMode.AUTO:
+            return self.jev_mode
+        if self.jev_api_key is not None:
+            return JevMode.LIVE
+        if self.app_mode is AppMode.LIVE:
+            return JevMode.LLM
+        return JevMode.MOCK
 
 
 @lru_cache(maxsize=1)

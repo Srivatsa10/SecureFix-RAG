@@ -18,6 +18,7 @@ from tests.test_nodes import FailingGenerator
 
 RUNTIME = RuntimeInfo(
     app_mode="test",
+    decision_layer="mock",
     jev="scripted",
     generator="offline",
     vector_store="mem",

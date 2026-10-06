@@ -6,7 +6,7 @@ services:
         required: false
     environment:
       APP_MODE: ${APP_MODE:-offline}
-      JEV_MODE: ${JEV_MODE:-mock}
+      JEV_MODE: ${JEV_MODE:-auto}
     ports:
       - "8000:8000"
     volumes:

@@ -39,9 +39,9 @@ class CaseRecord(BaseModel):
     retries: int
     scores: dict[str, float] | None
     latency_ms: float
-    jev_latency_ms: float
-    jev_calls: int
-    jev_decisions: int
+    decision_latency_ms: float
+    decision_calls: int
+    decisions: int
     generation_input_tokens: int
     generation_output_tokens: int
     generation_usd: float
@@ -65,7 +65,7 @@ def percentile(values: list[float], pct: float) -> float:
 
 
 def to_record(case: EvalCase, result: RemediationResult) -> CaseRecord:
-    jev_usage = [u for u in result.usage if u.provider == "jev"]
+    decision_usage = [u for u in result.usage if u.provider in ("jev", "llm_judge")]
     return CaseRecord(
         case_id=case.id,
         expected_status=case.expected_status.value,
@@ -75,9 +75,9 @@ def to_record(case: EvalCase, result: RemediationResult) -> CaseRecord:
         retries=result.retries,
         scores={d: s.value for d, s in result.scores.as_dict().items()} if result.scores else None,
         latency_ms=result.latency_ms,
-        jev_latency_ms=round(sum(u.latency_ms for u in jev_usage), 2),
-        jev_calls=result.cost.jev_calls,
-        jev_decisions=result.cost.jev_decisions,
+        decision_latency_ms=round(sum(u.latency_ms for u in decision_usage), 2),
+        decision_calls=result.cost.decision_calls,
+        decisions=result.cost.decisions,
         generation_input_tokens=result.cost.generation_input_tokens,
         generation_output_tokens=result.cost.generation_output_tokens,
         generation_usd=result.cost.generation_usd,
@@ -112,19 +112,23 @@ def render_markdown(report: Report) -> str:
     judge = sum(c.llm_judge_decision_usd for c in cases)
     latencies = [c.latency_ms for c in cases]
     remediated_latencies = [c.latency_ms for c in remediated]
-    jev_latencies = [c.jev_latency_ms for c in cases]
-    decisions = sum(c.jev_decisions for c in cases)
+    decision_latencies = [c.decision_latency_ms for c in cases]
+    decisions = sum(c.decisions for c in cases)
+    layer = runtime.decision_layer
+    judge_ran = layer == "llm_judge"
+    jev_tag = "estimate" if judge_ran else "this run"
+    judge_tag = "this run" if judge_ran else "counterfactual"
 
     lines = [
         f"# Eval results - {report.generated_at}",
         "",
-        f"**Runtime:** app_mode=`{runtime.app_mode}`, jev=`{runtime.jev}`, "
+        f"**Runtime:** app_mode=`{runtime.app_mode}`, decisions=`{runtime.jev}`, "
         f"generator=`{runtime.generator}`, vector store=`{runtime.vector_store}`",
         "",
     ]
     if runtime.warnings:
         lines += [
-            "> **Not a measurement of Bedrock/Jev.** " + " ".join(runtime.warnings),
+            "> **Read with care.** " + " ".join(runtime.warnings),
             "> Token counts for mocked calls are local estimates; latencies are local compute.",
             "",
         ]
@@ -147,18 +151,20 @@ def render_markdown(report: Report) -> str:
         f"| End-to-end latency P50 / P95 (remediated) | "
         f"{percentile(remediated_latencies, 50):.0f} ms / "
         f"{percentile(remediated_latencies, 95):.0f} ms |",
-        f"| Jev decision time per request P50 / P95 | {percentile(jev_latencies, 50):.1f} ms / "
-        f"{percentile(jev_latencies, 95):.1f} ms |",
+        f"| Decision-layer time per request P50 / P95 | "
+        f"{percentile(decision_latencies, 50):.1f} ms / "
+        f"{percentile(decision_latencies, 95):.1f} ms |",
         "",
-        "## Cost: Jev-gated decisions vs. LLM-judge decisions",
+        "## Cost: Jev decisions vs. LLM-judge decisions",
         "",
-        f"{decisions} typed decisions across {sum(c.jev_calls for c in cases)} Jev calls.",
+        f"Decision layer this run: **{layer}**. {decisions} typed decisions across "
+        f"{sum(c.decision_calls for c in cases)} decision calls.",
         "",
         "| | Generation | Decisions | Total |",
         "|---|---|---|---|",
-        f"| Jev as decision layer (this run) | {_fmt_usd(gen)} | {_fmt_usd(jev)} | "
+        f"| Jev as decision layer ({jev_tag}) | {_fmt_usd(gen)} | {_fmt_usd(jev)} | "
         f"{_fmt_usd(gen + jev)} |",
-        f"| LLM judge for every decision (counterfactual) | {_fmt_usd(gen)} | {_fmt_usd(judge)} | "
+        f"| LLM judge for every decision ({judge_tag}) | {_fmt_usd(gen)} | {_fmt_usd(judge)} | "
         f"{_fmt_usd(gen + judge)} |",
         "",
         f"Decision-layer cost ratio: **{judge / jev:.0f}x** cheaper with Jev; "

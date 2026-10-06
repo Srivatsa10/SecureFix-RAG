@@ -41,7 +41,10 @@ export function ResultView({ result }: { result: RemediationResult }) {
       ) : null}
 
       {scores ? (
-        <Card title="Jev evaluation" subtitle={`Every dimension must reach ${result.score_threshold.toFixed(2)} to ship.`}>
+        <Card
+          title={result.runtime.decision_layer === 'llm_judge' ? 'Evaluation (LLM judge)' : 'Evaluation (Jev)'}
+          subtitle={`Every dimension must reach ${result.score_threshold.toFixed(2)} to ship.`}
+        >
           <ScoreBars scores={scores} threshold={result.score_threshold} />
         </Card>
       ) : null}

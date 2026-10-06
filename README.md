@@ -6,7 +6,9 @@ specific, reviewable code patch.
 1. **Retrieves** your approved secure-code snippets and current OWASP guidance (Pinecone).
 2. **Drafts** a patch that follows your framework's conventions (AWS Bedrock).
 3. **Scores** the draft for groundedness, security correctness and framework fit using
-   Jev, a fast and cheap typed decision model.
+   Jev, a fast and cheap typed decision model. **No Jev key?** An adversarial LLM judge
+   on Bedrock makes the same decisions instead, under a reviewer prompt that assumes
+   every patch is broken until proven otherwise.
 4. **Ships, retries or escalates.** If every score passes, the patch ships. Otherwise
    it retries with adjusted retrieval, and after 3 retries it hands off to a human
    reviewer.
@@ -37,12 +39,15 @@ cd frontend && npm install && npm run dev
 
 Then open http://localhost:5173, pick an example and click **Generate patch**.
 
-**No API keys are needed to try it.** By default (`APP_MODE=offline`, `JEV_MODE=mock`)
-the app uses clearly labelled local stand-ins for Bedrock, Pinecone and Jev. To use the
-real services:
-1. Fill in `.env`: a Bedrock API key (`AWS_BEARER_TOKEN_BEDROCK`) or other AWS credentials with access to Claude Haiku 4.5 and Titan
-   Embeddings V2, a [pinecone.io](https://www.pinecone.io) API key, and a Jev key.
-2. Set `APP_MODE=live` and `JEV_MODE=live`.
+**To use the real services:**
+1. Fill in `.env`:
+   - a Bedrock API key (`AWS_BEARER_TOKEN_BEDROCK`), or other AWS credentials, with
+     access to Claude Haiku 4.5 and Titan Embeddings V2,
+   - a [pinecone.io](https://www.pinecone.io) API key,
+   - optionally a Jev API key.
+2. Leave `APP_MODE=live` and `JEV_MODE=auto`. With a Jev key, decisions go to Jev;
+   without one, they go to the LLM judge on Bedrock (slower and costlier, but no extra
+   account needed).
 3. Load the knowledge base:
 
 ```bash
@@ -62,5 +67,8 @@ cd backend && uv run remediation-ingest
 If you have `make`, the `Makefile` has the same commands as shortcuts: `make install`,
 `make backend`, `make frontend`, `make test`, `make demo`, `make eval`. Run `make help`
 to list them.
+
+**No keys at all?** Set `APP_MODE=offline` in `.env`. The app then runs end to end on
+clearly labelled local stand-ins for Bedrock, Pinecone and the decision layer.
 
 API docs are served at http://localhost:8000/docs once the backend is running.

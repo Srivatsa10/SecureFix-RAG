@@ -42,19 +42,32 @@ def apply_bedrock_api_key(settings: Settings) -> None:
         os.environ[BEARER_TOKEN_ENV] = settings.aws_bearer_token_bedrock.get_secret_value()
 
 
-def build_chat_model(settings: Settings) -> BaseChatModel:
+def _converse_model(settings: Settings, **kwargs: Any) -> BaseChatModel:
     from langchain_aws import ChatBedrockConverse
 
     apply_bedrock_api_key(settings)
-
-    kwargs: dict[str, Any] = {
-        "model_id": settings.bedrock_generation_model_id,
-        "region_name": settings.aws_region,
-        "max_tokens": settings.bedrock_generation_max_tokens,
-    }
+    kwargs["region_name"] = settings.aws_region
     if settings.aws_profile:
         kwargs["credentials_profile_name"] = settings.aws_profile
     return ChatBedrockConverse(**kwargs)
+
+
+def build_chat_model(settings: Settings) -> BaseChatModel:
+    return _converse_model(
+        settings,
+        model_id=settings.bedrock_generation_model_id,
+        max_tokens=settings.bedrock_generation_max_tokens,
+    )
+
+
+def build_judge_model(settings: Settings) -> BaseChatModel:
+    """Chat model for the LLM-judge decision layer: deterministic (temperature 0)."""
+    return _converse_model(
+        settings,
+        model_id=settings.bedrock_judge_model_id,
+        max_tokens=settings.bedrock_judge_max_tokens,
+        temperature=0.0,
+    )
 
 
 def build_embeddings(settings: Settings) -> Embeddings:

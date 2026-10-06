@@ -65,9 +65,11 @@ export interface TraceEvent {
   duration_ms: number;
 }
 
+export type DecisionLayer = 'jev' | 'llm_judge' | 'mock';
+
 export interface UsageRecord {
   node: string;
-  provider: 'bedrock' | 'jev' | 'offline';
+  provider: 'bedrock' | 'jev' | 'llm_judge' | 'offline';
   model: string;
   input_tokens: number;
   output_tokens: number;
@@ -78,14 +80,18 @@ export interface UsageRecord {
 
 export interface CostSummary {
   generation_usd: number;
-  jev_usd: number;
-  total_usd: number;
-  jev_calls: number;
-  jev_decisions: number;
-  jev_input_tokens: number;
   generation_input_tokens: number;
   generation_output_tokens: number;
+  /** Which engine made this run's decisions; the other engine's cost is an estimate. */
+  decision_layer: 'jev' | 'llm_judge' | 'none';
+  decision_calls: number;
+  decisions: number;
+  decision_input_tokens: number;
+  decision_output_tokens: number;
+  jev_usd: number;
   llm_judge_decision_usd: number;
+  total_usd: number;
+  total_with_jev_usd: number;
   total_with_llm_judge_usd: number;
   decision_cost_ratio: number | null;
   priced_mock_calls: boolean;
@@ -93,6 +99,7 @@ export interface CostSummary {
 
 export interface RuntimeInfo {
   app_mode: string;
+  decision_layer: DecisionLayer;
   jev: string;
   generator: string;
   vector_store: string;

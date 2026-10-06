@@ -9,7 +9,7 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, Field
 
-Provider = Literal["bedrock", "jev", "offline"]
+Provider = Literal["bedrock", "jev", "llm_judge", "offline"]
 
 
 class UsageRecord(BaseModel):
