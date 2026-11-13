@@ -105,7 +105,7 @@ def create_app(
     app = FastAPI(
         title="RemediationRAG",
         version="0.1.0",
-        summary="Self-correcting security remediation: Bedrock drafts, Jev decides.",
+        summary="Self-correcting security remediation: Bedrock drafts, Jev (or an LLM judge) decides.",
         lifespan=lifespan,
     )
     app.add_middleware(

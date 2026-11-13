@@ -1,7 +1,7 @@
 [project]
 name = "remediation-rag"
 version = "0.1.0"
-description = "Self-correcting security remediation RAG: Bedrock generation gated by Jev decisions, orchestrated with LangGraph."
+description = "Self-correcting security remediation RAG: Bedrock generation gated by a typed decision layer (Jev, or an LLM judge), orchestrated with LangGraph."
 requires-python = ">=3.12,<3.14"
 dependencies = [
     "fastapi>=0.115",
