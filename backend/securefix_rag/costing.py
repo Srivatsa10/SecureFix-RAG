@@ -21,8 +21,8 @@ from typing import Literal
 
 from pydantic import BaseModel
 
-from remediation_rag.config import Settings
-from remediation_rag.telemetry import UsageRecord
+from securefix_rag.config import Settings
+from securefix_rag.telemetry import UsageRecord
 
 DecisionLayerKind = Literal["jev", "llm_judge", "none"]
 

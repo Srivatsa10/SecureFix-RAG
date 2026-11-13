@@ -15,8 +15,8 @@ from langchain_core.embeddings import Embeddings
 from langchain_core.language_models import BaseChatModel
 from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
 
-from remediation_rag.config import Settings
-from remediation_rag.generation import (
+from securefix_rag.config import Settings
+from securefix_rag.generation import (
     SYSTEM_PROMPT,
     DraftContext,
     DraftGenerationError,
@@ -24,7 +24,7 @@ from remediation_rag.generation import (
     parse_draft,
     render_user_prompt,
 )
-from remediation_rag.telemetry import stopwatch
+from securefix_rag.telemetry import stopwatch
 
 logger = logging.getLogger(__name__)
 

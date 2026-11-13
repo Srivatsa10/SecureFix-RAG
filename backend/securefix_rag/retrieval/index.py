@@ -14,7 +14,7 @@ from typing import Literal
 from langchain_core.documents import Document
 from langchain_core.vectorstores import VectorStore
 
-from remediation_rag.domain import Chunk, SourceKind
+from securefix_rag.domain import Chunk, SourceKind
 
 logger = logging.getLogger(__name__)
 

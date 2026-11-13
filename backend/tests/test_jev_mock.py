@@ -1,5 +1,5 @@
-from remediation_rag.clients.jev import ChoiceQuestion, NoulQuestion, ScoreQuestion
-from remediation_rag.clients.jev_mock import MockJevClient
+from securefix_rag.clients.jev import ChoiceQuestion, NoulQuestion, ScoreQuestion
+from securefix_rag.clients.jev_mock import MockJevClient
 
 VULN_SQL = "cursor.execute(f\"SELECT * FROM users WHERE name = '{name}'\")"
 LEVELS = ["none", "weak", "partial", "strong", "complete"]

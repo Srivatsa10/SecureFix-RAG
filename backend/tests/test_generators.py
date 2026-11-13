@@ -5,10 +5,10 @@ import pytest
 from langchain_core.language_models.fake_chat_models import GenericFakeChatModel
 from langchain_core.messages import AIMessage
 
-from remediation_rag.clients.bedrock import BedrockClient
-from remediation_rag.clients.offline import OfflinePatchGenerator
-from remediation_rag.domain import Chunk, Language, RemediationRequest, SourceKind
-from remediation_rag.generation import (
+from securefix_rag.clients.bedrock import BedrockClient
+from securefix_rag.clients.offline import OfflinePatchGenerator
+from securefix_rag.domain import Chunk, Language, RemediationRequest, SourceKind
+from securefix_rag.generation import (
     DraftContext,
     DraftGenerationError,
     parse_draft,
@@ -116,8 +116,8 @@ async def test_offline_generator_parameterizes(language, code, expected):
 
 
 def test_bedrock_api_key_from_settings_is_exported(monkeypatch):
-    from remediation_rag.clients.bedrock import BEARER_TOKEN_ENV, apply_bedrock_api_key
-    from remediation_rag.config import Settings
+    from securefix_rag.clients.bedrock import BEARER_TOKEN_ENV, apply_bedrock_api_key
+    from securefix_rag.config import Settings
 
     monkeypatch.delenv(BEARER_TOKEN_ENV, raising=False)
     apply_bedrock_api_key(Settings(_env_file=None, aws_bearer_token_bedrock="tok-123"))

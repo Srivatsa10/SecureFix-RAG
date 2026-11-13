@@ -4,11 +4,11 @@ from typing import Any
 
 import pytest
 
-from remediation_rag.domain import DimensionScore, EvaluationScores, RemediationRequest
-from remediation_rag.graph.builder import build_graph
-from remediation_rag.graph.edges import RoutingPolicy
-from remediation_rag.graph.state import GraphState, NodeName
-from remediation_rag.telemetry import TraceEvent
+from securefix_rag.domain import DimensionScore, EvaluationScores, RemediationRequest
+from securefix_rag.graph.builder import build_graph
+from securefix_rag.graph.edges import RoutingPolicy
+from securefix_rag.graph.state import GraphState, NodeName
+from securefix_rag.telemetry import TraceEvent
 
 MAX_RETRIES = 3
 

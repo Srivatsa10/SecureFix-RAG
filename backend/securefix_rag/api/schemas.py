@@ -4,8 +4,8 @@ from __future__ import annotations
 
 from pydantic import BaseModel
 
-from remediation_rag.domain import Language
-from remediation_rag.service import RuntimeInfo
+from securefix_rag.domain import Language
+from securefix_rag.service import RuntimeInfo
 
 
 class HealthResponse(BaseModel):

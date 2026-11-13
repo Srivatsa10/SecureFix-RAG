@@ -8,7 +8,7 @@ from typing import Protocol, runtime_checkable
 
 from pydantic import BaseModel, Field, ValidationError
 
-from remediation_rag.domain import Chunk, PatchDraft, RemediationRequest, ScoreDimension
+from securefix_rag.domain import Chunk, PatchDraft, RemediationRequest, ScoreDimension
 
 
 class DraftGenerationError(RuntimeError):

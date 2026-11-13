@@ -2,18 +2,18 @@
 
 import pytest
 
-from remediation_rag.clients.offline import OfflinePatchGenerator
-from remediation_rag.domain import (
+from securefix_rag.clients.offline import OfflinePatchGenerator
+from securefix_rag.domain import (
     Chunk,
     DimensionScore,
     EvaluationScores,
     RemediationStatus,
     SourceKind,
 )
-from remediation_rag.generation import DraftContext, DraftGenerationError, GenerationResult
-from remediation_rag.graph.nodes import PipelineConfig, RemediationNodes
-from remediation_rag.graph.retrieval_plans import adjust_plan, initial_plan
-from remediation_rag.graph.state import NodeName
+from securefix_rag.generation import DraftContext, DraftGenerationError, GenerationResult
+from securefix_rag.graph.nodes import PipelineConfig, RemediationNodes
+from securefix_rag.graph.retrieval_plans import adjust_plan, initial_plan
+from securefix_rag.graph.state import NodeName
 from tests.conftest import PY_VULN, ScriptedJev
 
 CONFIG = PipelineConfig(

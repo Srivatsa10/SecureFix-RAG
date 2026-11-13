@@ -8,17 +8,17 @@ from typing import Any
 
 from pydantic import BaseModel
 
-from remediation_rag.config import Settings
-from remediation_rag.costing import CostSummary, summarize_costs
-from remediation_rag.domain import (
+from securefix_rag.config import Settings
+from securefix_rag.costing import CostSummary, summarize_costs
+from securefix_rag.domain import (
     Chunk,
     EvaluationScores,
     PatchDraft,
     RemediationRequest,
     RemediationStatus,
 )
-from remediation_rag.graph.state import GraphState, NodeName
-from remediation_rag.telemetry import TraceEvent, UsageRecord, stopwatch
+from securefix_rag.graph.state import GraphState, NodeName
+from securefix_rag.telemetry import TraceEvent, UsageRecord, stopwatch
 
 logger = logging.getLogger(__name__)
 

@@ -21,9 +21,9 @@ from dataclasses import dataclass
 
 from langchain_core.embeddings import Embeddings
 
-from remediation_rag.domain import Chunk, Citation, PatchDraft
-from remediation_rag.generation import DraftContext, GenerationResult
-from remediation_rag.telemetry import stopwatch
+from securefix_rag.domain import Chunk, Citation, PatchDraft
+from securefix_rag.generation import DraftContext, GenerationResult
+from securefix_rag.telemetry import stopwatch
 
 OFFLINE_MODEL_NAME = "offline-rule-based-generator"
 OFFLINE_BANNER = "OFFLINE MODE: rule-based rewrite, no LLM was called."

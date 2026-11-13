@@ -64,7 +64,7 @@ htmlcov/
 
 # App data (fetched OWASP cache, raw eval runs)
 backend/data/
-backend/remediation_rag/eval/results/*.json
+backend/securefix_rag/eval/results/*.json
 
 # ---------------------------------------------------------------------------
 # Node / frontend

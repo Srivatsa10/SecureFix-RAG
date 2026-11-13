@@ -6,17 +6,17 @@ import logging
 from collections.abc import Awaitable, Callable
 from dataclasses import dataclass, field
 
-from remediation_rag.clients.jev import HttpJevClient, JevClient
-from remediation_rag.clients.jev_mock import MockJevClient
-from remediation_rag.config import AppMode, JevMode, Settings
-from remediation_rag.generation import PatchGenerator
-from remediation_rag.graph.builder import build_graph
-from remediation_rag.graph.edges import RoutingPolicy
-from remediation_rag.graph.nodes import PipelineConfig, RemediationNodes
-from remediation_rag.ingestion.pipeline import build_plan, ingest
-from remediation_rag.ingestion.sources import supported_vuln_classes
-from remediation_rag.retrieval.index import KnowledgeIndex
-from remediation_rag.service import RemediationService, RuntimeInfo
+from securefix_rag.clients.jev import HttpJevClient, JevClient
+from securefix_rag.clients.jev_mock import MockJevClient
+from securefix_rag.config import AppMode, JevMode, Settings
+from securefix_rag.generation import PatchGenerator
+from securefix_rag.graph.builder import build_graph
+from securefix_rag.graph.edges import RoutingPolicy
+from securefix_rag.graph.nodes import PipelineConfig, RemediationNodes
+from securefix_rag.ingestion.pipeline import build_plan, ingest
+from securefix_rag.ingestion.sources import supported_vuln_classes
+from securefix_rag.retrieval.index import KnowledgeIndex
+from securefix_rag.service import RemediationService, RuntimeInfo
 
 logger = logging.getLogger(__name__)
 
@@ -53,8 +53,8 @@ def _build_decision_layer(settings: Settings) -> DecisionLayer:
         )
         return DecisionLayer(client, "jev", f"Jev ({settings.jev_model})", client.aclose)
     if mode is JevMode.LLM:
-        from remediation_rag.clients.bedrock import build_judge_model
-        from remediation_rag.clients.llm_judge import LlmJudgeClient
+        from securefix_rag.clients.bedrock import build_judge_model
+        from securefix_rag.clients.llm_judge import LlmJudgeClient
 
         judge = LlmJudgeClient(
             build_judge_model(settings),
@@ -71,8 +71,8 @@ async def _build_index_and_generator(
     settings: Settings,
 ) -> tuple[KnowledgeIndex, PatchGenerator, str, str]:
     if settings.app_mode is AppMode.LIVE:
-        from remediation_rag.clients.bedrock import BedrockClient, build_embeddings
-        from remediation_rag.retrieval.factory import build_pinecone_index
+        from securefix_rag.clients.bedrock import BedrockClient, build_embeddings
+        from securefix_rag.retrieval.factory import build_pinecone_index
 
         index = build_pinecone_index(settings, build_embeddings(settings))
         generator = BedrockClient.from_settings(settings)
@@ -83,8 +83,8 @@ async def _build_index_and_generator(
             f"bedrock ({settings.bedrock_embedding_model_id})",
         )
 
-    from remediation_rag.clients.offline import HashingEmbeddings, OfflinePatchGenerator
-    from remediation_rag.retrieval.factory import build_memory_index
+    from securefix_rag.clients.offline import HashingEmbeddings, OfflinePatchGenerator
+    from securefix_rag.retrieval.factory import build_memory_index
 
     index = build_memory_index(HashingEmbeddings())
     plan = build_plan(settings.data_cache_dir / "owasp", offline=True)

@@ -1,11 +1,11 @@
 import pytest
 from fastapi.testclient import TestClient
 
-from remediation_rag.api.app import create_app
-from remediation_rag.clients.jev import JevResponseError
-from remediation_rag.config import Settings
-from remediation_rag.container import Container
-from remediation_rag.service import RemediationService, RuntimeInfo
+from securefix_rag.api.app import create_app
+from securefix_rag.clients.jev import JevResponseError
+from securefix_rag.config import Settings
+from securefix_rag.container import Container
+from securefix_rag.service import RemediationService, RuntimeInfo
 
 PY_CODE = (
     "def f(cursor, name):\n    cursor.execute(f\"SELECT * FROM users WHERE name = '{name}'\")\n"

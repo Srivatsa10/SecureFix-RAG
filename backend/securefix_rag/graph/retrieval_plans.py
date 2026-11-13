@@ -10,8 +10,8 @@ Retries change *what the generator sees*, targeted at the weakest Jev dimension:
 
 from __future__ import annotations
 
-from remediation_rag.domain import RemediationRequest, ScoreDimension
-from remediation_rag.graph.state import RetrievalPlan
+from securefix_rag.domain import RemediationRequest, ScoreDimension
+from securefix_rag.graph.state import RetrievalPlan
 
 MAX_K = 10
 

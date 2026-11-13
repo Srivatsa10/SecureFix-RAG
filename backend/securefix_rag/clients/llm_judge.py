@@ -22,7 +22,7 @@ from typing import Any
 from langchain_core.language_models import BaseChatModel
 from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
 
-from remediation_rag.clients.jev import (
+from securefix_rag.clients.jev import (
     ChoiceQuestion,
     JevQuestion,
     JevResponseError,
@@ -31,7 +31,7 @@ from remediation_rag.clients.jev import (
     NoulQuestion,
     parse_answers,
 )
-from remediation_rag.telemetry import stopwatch
+from securefix_rag.telemetry import stopwatch
 
 logger = logging.getLogger(__name__)
 

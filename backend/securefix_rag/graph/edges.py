@@ -10,7 +10,7 @@ from __future__ import annotations
 from collections.abc import Callable
 from dataclasses import dataclass
 
-from remediation_rag.graph.state import GraphState, NodeName
+from securefix_rag.graph.state import GraphState, NodeName
 
 
 @dataclass(frozen=True)

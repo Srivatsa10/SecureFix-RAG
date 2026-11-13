@@ -1,9 +1,9 @@
 """Run one remediation end-to-end and print the graph's decision trace.
 
-uv run remediation-demo                              # default example
-uv run remediation-demo --case py-dynamic-order-by   # exercises retries + handoff
-uv run remediation-demo --file vuln.py --language python --framework psycopg
-uv run remediation-demo --list
+uv run securefix-demo                              # default example
+uv run securefix-demo --case py-dynamic-order-by   # exercises retries + handoff
+uv run securefix-demo --file vuln.py --language python --framework psycopg
+uv run securefix-demo --list
 """
 
 from __future__ import annotations
@@ -15,12 +15,12 @@ import os
 import sys
 from pathlib import Path
 
-from remediation_rag.config import get_settings
-from remediation_rag.container import build_container
-from remediation_rag.domain import Language, RemediationRequest
-from remediation_rag.eval.dataset import load_cases
-from remediation_rag.graph.state import NodeName
-from remediation_rag.service import RemediationResult
+from securefix_rag.config import get_settings
+from securefix_rag.container import build_container
+from securefix_rag.domain import Language, RemediationRequest
+from securefix_rag.eval.dataset import load_cases
+from securefix_rag.graph.state import NodeName
+from securefix_rag.service import RemediationResult
 
 _COLOR = sys.stdout.isatty() and not os.environ.get("NO_COLOR")
 
@@ -45,7 +45,7 @@ NODE_STYLE = {
 def render(result: RemediationResult) -> str:
     out: list[str] = []
     runtime = result.runtime
-    out.append(_c("RemediationRAG - decision trace", "1"))
+    out.append(_c("SecureFix-RAG - decision trace", "1"))
     out.append(
         f"  decisions: {runtime.jev}\n  generator: {runtime.generator}\n"
         f"  index: {runtime.vector_store}"

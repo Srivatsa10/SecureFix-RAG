@@ -74,7 +74,7 @@ class Settings(BaseSettings):
     # cloud/region only choose where Pinecone hosts the serverless index; the free Starter
     # plan supports aws/us-east-1. No AWS account is involved.
     pinecone_api_key: SecretStr | None = None
-    pinecone_index_name: str = "remediation-rag"
+    pinecone_index_name: str = "securefix-rag"
     pinecone_cloud: str = "aws"
     pinecone_region: str = "us-east-1"
     pinecone_namespace_internal: str = "internal-secure-code"

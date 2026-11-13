@@ -1,8 +1,8 @@
 """Ingestion: load -> chunk (with metadata) -> embed -> upsert into two namespaces.
 
-uv run remediation-ingest --dry-run          # chunk + print stats, no credentials needed
-uv run remediation-ingest                    # embed with Bedrock Titan, upsert to Pinecone
-uv run remediation-ingest --offline-guidance # use the local digest instead of fetching OWASP
+uv run securefix-ingest --dry-run          # chunk + print stats, no credentials needed
+uv run securefix-ingest                    # embed with Bedrock Titan, upsert to Pinecone
+uv run securefix-ingest --offline-guidance # use the local digest instead of fetching OWASP
 """
 
 from __future__ import annotations
@@ -21,15 +21,15 @@ from langchain_text_splitters import (
     RecursiveCharacterTextSplitter,
 )
 
-from remediation_rag.domain import SourceKind, VulnClass
-from remediation_rag.ingestion.sources import (
+from securefix_rag.domain import SourceKind, VulnClass
+from securefix_rag.ingestion.sources import (
     SNIPPETS_DIR,
     GuidanceDocument,
     fetch_guidance,
     load_manifest,
     supported_vuln_classes,
 )
-from remediation_rag.retrieval.index import KnowledgeIndex
+from securefix_rag.retrieval.index import KnowledgeIndex
 
 logger = logging.getLogger(__name__)
 
@@ -156,9 +156,9 @@ def describe(plan: IngestionPlan) -> str:
 
 
 def main(argv: list[str] | None = None) -> None:
-    from remediation_rag.clients.bedrock import build_embeddings
-    from remediation_rag.config import get_settings
-    from remediation_rag.retrieval.factory import build_pinecone_index, ensure_pinecone_index
+    from securefix_rag.clients.bedrock import build_embeddings
+    from securefix_rag.config import get_settings
+    from securefix_rag.retrieval.factory import build_pinecone_index, ensure_pinecone_index
 
     parser = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawTextHelpFormatter

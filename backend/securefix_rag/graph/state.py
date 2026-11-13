@@ -7,14 +7,14 @@ from typing import Annotated, TypedDict
 
 from pydantic import BaseModel, Field
 
-from remediation_rag.domain import (
+from securefix_rag.domain import (
     Chunk,
     EvaluationScores,
     PatchDraft,
     RemediationRequest,
     RemediationStatus,
 )
-from remediation_rag.telemetry import TraceEvent, UsageRecord
+from securefix_rag.telemetry import TraceEvent, UsageRecord
 
 
 class NodeName:

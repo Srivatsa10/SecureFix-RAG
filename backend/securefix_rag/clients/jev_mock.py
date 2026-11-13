@@ -20,7 +20,7 @@ import re
 from collections.abc import Callable, Mapping
 from typing import Any
 
-from remediation_rag.clients.jev import (
+from securefix_rag.clients.jev import (
     ChoiceAnswer,
     ChoiceQuestion,
     JevAnswer,
@@ -34,7 +34,7 @@ from remediation_rag.clients.jev import (
     check_context,
     estimate_tokens,
 )
-from remediation_rag.telemetry import stopwatch
+from securefix_rag.telemetry import stopwatch
 
 MOCK_MODEL_NAME = "mock-jev-heuristic"
 

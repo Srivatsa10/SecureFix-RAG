@@ -8,7 +8,7 @@ from pathlib import Path
 import yaml
 from pydantic import BaseModel
 
-from remediation_rag.domain import Language, RemediationRequest, RemediationStatus
+from securefix_rag.domain import Language, RemediationRequest, RemediationStatus
 
 CASES_PATH = Path(__file__).resolve().parent / "cases.yaml"
 

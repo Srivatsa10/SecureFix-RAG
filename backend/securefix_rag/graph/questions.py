@@ -6,8 +6,8 @@ defined here once and referenced by name everywhere else.
 
 from __future__ import annotations
 
-from remediation_rag.clients.jev import ChoiceQuestion, NoulQuestion, ScoreQuestion
-from remediation_rag.domain import VULN_CLASS_DESCRIPTIONS
+from securefix_rag.clients.jev import ChoiceQuestion, NoulQuestion, ScoreQuestion
+from securefix_rag.domain import VULN_CLASS_DESCRIPTIONS
 
 IN_SCOPE = "in_scope"
 VULN_CLASS = "vuln_class"

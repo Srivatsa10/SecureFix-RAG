@@ -1,6 +1,6 @@
 """FastAPI application exposing the remediation pipeline.
 
-uv run uvicorn remediation_rag.api.app:create_app --factory --reload
+uv run uvicorn securefix_rag.api.app:create_app --factory --reload
 """
 
 from __future__ import annotations
@@ -15,13 +15,13 @@ from fastapi import APIRouter, Depends, FastAPI, HTTPException, Request, Respons
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
-from remediation_rag.api.schemas import ErrorResponse, ExampleCase, HealthResponse
-from remediation_rag.clients.jev import JevError
-from remediation_rag.config import Settings, get_settings
-from remediation_rag.container import Container, build_container
-from remediation_rag.domain import RemediationRequest
-from remediation_rag.eval.dataset import load_cases
-from remediation_rag.service import RemediationResult, RemediationService
+from securefix_rag.api.schemas import ErrorResponse, ExampleCase, HealthResponse
+from securefix_rag.clients.jev import JevError
+from securefix_rag.config import Settings, get_settings
+from securefix_rag.container import Container, build_container
+from securefix_rag.domain import RemediationRequest
+from securefix_rag.eval.dataset import load_cases
+from securefix_rag.service import RemediationResult, RemediationService
 
 logger = logging.getLogger(__name__)
 
@@ -103,9 +103,9 @@ def create_app(
             await app.state.container.aclose()
 
     app = FastAPI(
-        title="RemediationRAG",
+        title="SecureFix-RAG",
         version="0.1.0",
-        summary="Self-correcting security remediation: Bedrock drafts, Jev (or an LLM judge) decides.",
+        summary="Self-correcting security remediation: Bedrock drafts, Jev or LLM judge decides.",
         lifespan=lifespan,
     )
     app.add_middleware(
@@ -128,12 +128,12 @@ def create_app(
 
     @app.exception_handler(JevError)
     async def jev_error_handler(request: Request, exc: JevError) -> JSONResponse:
-        logger.error("Jev failure: %s", exc)
+        logger.error("decision layer failure: %s", exc)
         return JSONResponse(
             status_code=status.HTTP_502_BAD_GATEWAY,
             content=ErrorResponse(
                 error="decision_service_unavailable",
-                detail="The Jev decision service failed; no patch was produced.",
+                detail="The decision layer (Jev or LLM judge) failed; no patch was produced.",
                 request_id=getattr(request.state, "request_id", None),
             ).model_dump(),
         )

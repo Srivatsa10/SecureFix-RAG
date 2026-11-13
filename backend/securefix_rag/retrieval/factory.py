@@ -7,9 +7,9 @@ import logging
 from langchain_core.embeddings import Embeddings
 from langchain_core.vectorstores import InMemoryVectorStore
 
-from remediation_rag.config import Settings
-from remediation_rag.domain import SourceKind
-from remediation_rag.retrieval.index import KnowledgeIndex
+from securefix_rag.config import Settings
+from securefix_rag.domain import SourceKind
+from securefix_rag.retrieval.index import KnowledgeIndex
 
 logger = logging.getLogger(__name__)
 

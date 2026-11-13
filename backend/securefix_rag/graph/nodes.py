@@ -15,8 +15,8 @@ import logging
 from dataclasses import dataclass
 from typing import Any
 
-from remediation_rag.clients.jev import JevClient, JevError, JevResult
-from remediation_rag.domain import (
+from securefix_rag.clients.jev import JevClient, JevError, JevResult
+from securefix_rag.domain import (
     SCORE_DIMENSIONS,
     Chunk,
     DimensionScore,
@@ -25,12 +25,12 @@ from remediation_rag.domain import (
     RemediationStatus,
     SourceKind,
 )
-from remediation_rag.generation import DraftContext, DraftGenerationError, PatchGenerator
-from remediation_rag.graph import questions as q
-from remediation_rag.graph.retrieval_plans import adjust_plan, initial_plan
-from remediation_rag.graph.state import Attempt, GraphState, NodeName
-from remediation_rag.retrieval.index import KnowledgeIndex
-from remediation_rag.telemetry import TraceEvent, UsageRecord, stopwatch
+from securefix_rag.generation import DraftContext, DraftGenerationError, PatchGenerator
+from securefix_rag.graph import questions as q
+from securefix_rag.graph.retrieval_plans import adjust_plan, initial_plan
+from securefix_rag.graph.state import Attempt, GraphState, NodeName
+from securefix_rag.retrieval.index import KnowledgeIndex
+from securefix_rag.telemetry import TraceEvent, UsageRecord, stopwatch
 
 logger = logging.getLogger(__name__)
 

@@ -1,7 +1,7 @@
 """Evaluation harness: run every case through the full graph and report cost/latency.
 
-    uv run remediation-eval                 # uses APP_MODE / JEV_MODE from the environment
-    uv run remediation-eval --concurrency 4
+    uv run securefix-eval                 # uses APP_MODE / JEV_MODE from the environment
+    uv run securefix-eval --concurrency 4
 
 Writes `eval/results/<timestamp>.json` (raw per-case records) and `eval/results/latest.md`
 (the tables quoted in the README). Every report is stamped with the runtime mode; numbers
@@ -20,10 +20,10 @@ from pathlib import Path
 
 from pydantic import BaseModel
 
-from remediation_rag.config import Settings, get_settings
-from remediation_rag.container import build_container
-from remediation_rag.eval.dataset import EvalCase, load_cases
-from remediation_rag.service import RemediationResult, RemediationService, RuntimeInfo
+from securefix_rag.config import Settings, get_settings
+from securefix_rag.container import build_container
+from securefix_rag.eval.dataset import EvalCase, load_cases
+from securefix_rag.service import RemediationResult, RemediationService, RuntimeInfo
 
 logger = logging.getLogger(__name__)
 

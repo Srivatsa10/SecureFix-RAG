@@ -33,7 +33,7 @@ export default function App() {
     <div className={styles.page}>
       <header className={styles.header}>
         <div>
-          <h1 className={styles.title}>RemediationRAG</h1>
+          <h1 className={styles.title}>SecureFix-RAG</h1>
           <p className={styles.tagline}>
             Security patches grounded in approved code and OWASP guidance, and scored before they ship.
           </p>

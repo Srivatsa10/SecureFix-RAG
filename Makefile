@@ -8,7 +8,7 @@ install:  ## Install backend (uv) and frontend (npm) dependencies
 	cd frontend && npm ci
 
 backend:  ## Run the FastAPI backend on :8000 (reload)
-	cd backend && uv run uvicorn remediation_rag.api.app:create_app --factory --reload --port 8000
+	cd backend && uv run uvicorn securefix_rag.api.app:create_app --factory --reload --port 8000
 
 frontend:  ## Run the Vite dev server on :5173 (proxies /api to :8000)
 	cd frontend && npm run dev
@@ -22,16 +22,16 @@ lint:  ## Lint and type-check both apps
 	cd frontend && npm run lint && npm run typecheck
 
 ingest-dry-run:  ## Chunk the seed corpus + OWASP cheat sheets and print stats (no keys needed)
-	cd backend && uv run remediation-ingest --dry-run
+	cd backend && uv run securefix-ingest --dry-run
 
 ingest:  ## Embed with Bedrock Titan and upsert into Pinecone (needs keys)
-	cd backend && uv run remediation-ingest
+	cd backend && uv run securefix-ingest
 
-eval:  ## Run the evaluation harness (writes backend/remediation_rag/eval/results/latest.md)
-	cd backend && uv run remediation-eval
+eval:  ## Run the evaluation harness (writes backend/securefix_rag/eval/results/latest.md)
+	cd backend && uv run securefix-eval
 
 demo:  ## Print the decision trace for one example (CASE=<id> to choose)
-	cd backend && uv run remediation-demo $(if $(CASE),--case $(CASE),)
+	cd backend && uv run securefix-demo $(if $(CASE),--case $(CASE),)
 
 up:  ## Build and run both services with docker compose
 	docker compose up --build

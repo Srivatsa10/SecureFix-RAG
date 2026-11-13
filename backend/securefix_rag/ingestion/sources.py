@@ -15,7 +15,7 @@ import httpx
 import yaml
 from pydantic import BaseModel
 
-from remediation_rag.domain import VulnClass
+from securefix_rag.domain import VulnClass
 
 logger = logging.getLogger(__name__)
 

@@ -3,7 +3,7 @@ import json
 import httpx
 import pytest
 
-from remediation_rag.clients.jev import (
+from securefix_rag.clients.jev import (
     ChoiceQuestion,
     HttpJevClient,
     JevContextOverflowError,

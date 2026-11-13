@@ -1,6 +1,6 @@
-# RemediationRAG
+# SecureFix-RAG
 
-RemediationRAG turns a detected vulnerability (starting with SQL injection) into a
+SecureFix-RAG turns a detected vulnerability (starting with SQL injection) into a
 specific, reviewable code patch.
 
 1. **Gates** the request: checks it is a remediation request and classifies the
@@ -39,7 +39,7 @@ cp .env.example .env
 **Backend** (FastAPI on http://localhost:8000), in one terminal:
 
 ```bash
-cd backend && uv sync && uv run uvicorn remediation_rag.api.app:create_app --factory --reload --port 8000
+cd backend && uv sync && uv run uvicorn securefix_rag.api.app:create_app --factory --reload --port 8000
 ```
 
 **Frontend** (React + Vite on http://localhost:5173), in a second terminal:
@@ -60,17 +60,17 @@ Then open http://localhost:5173, pick an example and click **Generate patch**.
    without one, they go to the LLM judge on Bedrock (slower and costlier, but no extra
    account needed). To force one, set `JEV_MODE` to `live` (Jev, key required), `llm`
    (LLM judge) or `mock` (local heuristics).
-3. Load the knowledge base (embeds with Titan and upserts into the `remediation-rag`
+3. Load the knowledge base (embeds with Titan and upserts into the `securefix-rag`
    Pinecone index, creating it if needed):
 
 ```bash
-cd backend && uv run remediation-ingest
+cd backend && uv run securefix-ingest
 ```
 
 Add `--dry-run` to only chunk the corpus and print stats, with no keys needed.
 
 Every other setting (model IDs, index name, score threshold, retry count, token prices)
-has a default in [`backend/remediation_rag/config.py`](backend/remediation_rag/config.py)
+has a default in [`backend/securefix_rag/config.py`](backend/securefix_rag/config.py)
 and can be overridden in `.env` in UPPER_CASE, for example `MAX_RETRIES=2`.
 
 ### Other commands
@@ -78,8 +78,8 @@ and can be overridden in `.env` in UPPER_CASE, for example `MAX_RETRIES=2`.
 | Command | What it does |
 |---|---|
 | `docker compose up --build` | Run both services in containers (UI on :5173, API on :8000). Uses `APP_MODE` from `.env`, or `offline` if there is none |
-| `cd backend && uv run remediation-demo --case py-dynamic-order-by` | Print the graph's decision trace in the terminal (`--list` shows the example ids, `--file` runs your own code) |
-| `cd backend && uv run remediation-eval` | Run the evaluation harness over the 12 example cases; writes the cost and latency report to `backend/remediation_rag/eval/results/latest.md` |
+| `cd backend && uv run securefix-demo --case py-dynamic-order-by` | Print the graph's decision trace in the terminal (`--list` shows the example ids, `--file` runs your own code) |
+| `cd backend && uv run securefix-eval` | Run the evaluation harness over the 12 example cases; writes the cost and latency report to `backend/securefix_rag/eval/results/latest.md` |
 | `cd backend && uv run pytest` | Backend tests |
 | `cd frontend && npm test` | Frontend tests |
 

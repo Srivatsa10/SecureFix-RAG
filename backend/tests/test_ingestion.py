@@ -2,12 +2,12 @@ from pathlib import Path
 
 from langchain_core.documents import Document
 
-from remediation_rag.clients.offline import HashingEmbeddings
-from remediation_rag.domain import SourceKind, VulnClass
-from remediation_rag.ingestion.pipeline import build_plan, chunk_internal_snippets, ingest
-from remediation_rag.ingestion.sources import SNIPPETS_DIR, fetch_guidance, load_manifest
-from remediation_rag.retrieval.factory import build_memory_index
-from remediation_rag.retrieval.index import to_callable_filter, to_pinecone_filter
+from securefix_rag.clients.offline import HashingEmbeddings
+from securefix_rag.domain import SourceKind, VulnClass
+from securefix_rag.ingestion.pipeline import build_plan, chunk_internal_snippets, ingest
+from securefix_rag.ingestion.sources import SNIPPETS_DIR, fetch_guidance, load_manifest
+from securefix_rag.retrieval.factory import build_memory_index
+from securefix_rag.retrieval.index import to_callable_filter, to_pinecone_filter
 
 REQUIRED_METADATA = {
     "chunk_id",

@@ -8,20 +8,20 @@ from langchain_core.language_models.fake_chat_models import GenericFakeChatModel
 from langchain_core.messages import AIMessage
 from langchain_core.outputs import ChatGeneration, ChatResult
 
-from remediation_rag.clients.jev import (
+from securefix_rag.clients.jev import (
     ChoiceQuestion,
     JevResponseError,
     NoulQuestion,
     ScoreQuestion,
 )
-from remediation_rag.clients.llm_judge import (
+from securefix_rag.clients.llm_judge import (
     JUDGE_SYSTEM_PROMPT,
     LlmJudgeClient,
     render_judge_prompt,
 )
-from remediation_rag.config import AppMode, JevMode, Settings
-from remediation_rag.costing import summarize_costs
-from remediation_rag.telemetry import UsageRecord
+from securefix_rag.config import AppMode, JevMode, Settings
+from securefix_rag.costing import summarize_costs
+from securefix_rag.telemetry import UsageRecord
 from tests.conftest import PY_VULN
 
 QUESTIONS = {

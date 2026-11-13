@@ -2,17 +2,17 @@
 
 import pytest
 
-from remediation_rag.clients.offline import OfflinePatchGenerator
-from remediation_rag.config import Settings
-from remediation_rag.container import build_container
-from remediation_rag.costing import summarize_costs
-from remediation_rag.domain import RemediationRequest, RemediationStatus
-from remediation_rag.graph.builder import build_graph
-from remediation_rag.graph.edges import RoutingPolicy
-from remediation_rag.graph.nodes import PipelineConfig, RemediationNodes
-from remediation_rag.graph.state import NodeName
-from remediation_rag.service import RemediationService, RuntimeInfo
-from remediation_rag.telemetry import UsageRecord
+from securefix_rag.clients.offline import OfflinePatchGenerator
+from securefix_rag.config import Settings
+from securefix_rag.container import build_container
+from securefix_rag.costing import summarize_costs
+from securefix_rag.domain import RemediationRequest, RemediationStatus
+from securefix_rag.graph.builder import build_graph
+from securefix_rag.graph.edges import RoutingPolicy
+from securefix_rag.graph.nodes import PipelineConfig, RemediationNodes
+from securefix_rag.graph.state import NodeName
+from securefix_rag.service import RemediationService, RuntimeInfo
+from securefix_rag.telemetry import UsageRecord
 from tests.conftest import PY_VULN, ScriptedJev
 from tests.test_nodes import FailingGenerator
 

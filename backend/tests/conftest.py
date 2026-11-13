@@ -4,7 +4,7 @@ from typing import Any
 
 import pytest
 
-from remediation_rag.clients.jev import (
+from securefix_rag.clients.jev import (
     ChoiceAnswer,
     ChoiceQuestion,
     JevQuestion,
@@ -15,12 +15,12 @@ from remediation_rag.clients.jev import (
     ScoreAnswer,
     ScoreQuestion,
 )
-from remediation_rag.clients.offline import HashingEmbeddings
-from remediation_rag.config import Settings
-from remediation_rag.domain import Language, RemediationRequest
-from remediation_rag.ingestion.pipeline import build_plan, ingest
-from remediation_rag.retrieval.factory import build_memory_index
-from remediation_rag.retrieval.index import KnowledgeIndex
+from securefix_rag.clients.offline import HashingEmbeddings
+from securefix_rag.config import Settings
+from securefix_rag.domain import Language, RemediationRequest
+from securefix_rag.ingestion.pipeline import build_plan, ingest
+from securefix_rag.retrieval.factory import build_memory_index
+from securefix_rag.retrieval.index import KnowledgeIndex
 
 PY_VULN = RemediationRequest(
     code=(

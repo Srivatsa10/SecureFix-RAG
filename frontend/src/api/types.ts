@@ -1,4 +1,4 @@
-// Mirrors the FastAPI response models in backend/remediation_rag/{service,domain,telemetry,costing}.py.
+// Mirrors the FastAPI response models in backend/securefix_rag/{service,domain,telemetry,costing}.py.
 // Keep in sync with GET /openapi.json when the backend contract changes.
 
 export type Language = 'python' | 'javascript' | 'typescript' | 'java';

@@ -15,13 +15,13 @@ from typing import Any, Protocol
 from langgraph.graph import END, START, StateGraph
 from langgraph.graph.state import CompiledStateGraph
 
-from remediation_rag.graph.edges import (
+from securefix_rag.graph.edges import (
     RoutingPolicy,
     make_route_after_evaluation,
     route_after_breaker,
     route_after_intent,
 )
-from remediation_rag.graph.state import GraphState, NodeName
+from securefix_rag.graph.state import GraphState, NodeName
 
 NodeFn = Callable[[GraphState], Awaitable[dict[str, Any]]]
 

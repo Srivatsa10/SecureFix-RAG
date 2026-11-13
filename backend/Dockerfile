@@ -11,7 +11,7 @@ WORKDIR /app
 COPY pyproject.toml uv.lock ./
 RUN uv sync --frozen --no-dev --no-install-project
 
-COPY remediation_rag ./remediation_rag
+COPY securefix_rag ./securefix_rag
 RUN uv sync --frozen --no-dev
 
 RUN useradd --create-home --uid 10001 app && mkdir -p /app/data && chown -R app /app/data
@@ -21,4 +21,4 @@ EXPOSE 8000
 HEALTHCHECK --interval=15s --timeout=3s --retries=5 \
   CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/health')"
 
-CMD ["/app/.venv/bin/uvicorn", "remediation_rag.api.app:create_app", "--factory", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["/app/.venv/bin/uvicorn", "securefix_rag.api.app:create_app", "--factory", "--host", "0.0.0.0", "--port", "8000"]
